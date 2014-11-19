@@ -215,7 +215,8 @@ urlencode_template_replace_operate()
 			
 		# Level 4 but no oddities
 		else
-						
+			ourVariableName=urlencode_template_variable_${variableName}
+			
 			if core_variable_array_isSet "$ourVariableName"; then
 				
 				$printNameEquals
