@@ -124,7 +124,7 @@ urlencode_template_replace_operate()
 	local encodingFunction="$3"
 	local printNameEquals="$4"
 	
-	local IFS=',' set -- $expressionLessOperator
+	IFS=',' set -- $expressionLessOperator
 	
 	local variableName
 	local ourVariableName
