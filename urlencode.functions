@@ -1,10 +1,42 @@
-# One of several possibilities from https://stackoverflow.com/questions/296536/urlencode-from-a-bash-script
-# Encoding should actually be done on each part of the path, eg /my/url/path should be encoded as my, url and path
-core_dependency_requires '*' curl
+# This approach is overly conservative, but it works
 urlencode_pathPiece()
 {
-	local pathPiece="$1"
+	printf "%s" "$1" | awk '
+BEGIN {
+	srand()
+	FS=""
+	RS="n/o/m/a/t/c/h" rand()
+	OFS=""
+	ORS=""
 	
+	for (n = 0; n < 256; n++)
+	{
+		ord[sprintf("%c", n)] = n
+		hex[sprintf("%c", n)] = "%" sprintf("%02X", n)
+	}
+}
+
+{
+	for (i = 1; i <= NF; i++)
+	{
+		x=ord[$i]
+		
+		# Unreserved characters
+		if ( (x >= 48 && x <= 57) || (x >= 65 && x <= 90) || (x >= 97 && x <= 122) || (x == 45 || x == 46 || x == 95 || x == 126) )
+		{
+			printf("%s", $i)
+		}
+		else
+		{
+			printf("%s", hex[$i])
+		}
+	}
+}'
+}
+
+core_dependency_requires '*' curl
+urlencode_form()
+{
 	# newer versions return 0, older versions 3
 	set +e
 	local data="$(curl --silent --output /dev/null --write-out '%{url_effective}' --get --url '' --data-urlencode "$pathPiece")"
