@@ -14,17 +14,16 @@ urlencode_template()
 	
 	# -E for BSD, -r for GNU / Busybox extended
 	
-	#echo 'hello{name}john{more}end' | gsed -r -e 's;\$;\\\$;g' -e "s,^([^}]+)\{,urlencode_literal '\1';{,g" -e "s,\}([^{]+)\$,}urlencode_literal '\1',g" -e "s,\}([^}{]+)\{,}urlencode_literal '\1';{,g" -e "s,\{([^{}]+)\},urlencode_template_replace '\1';,g"
+	#echo 'hello{name}john{more}end' | gsed -r -e 's,\$,\\\$,g' -e 's,",\\",g' -e "s,^([^}]+)\{,urlencode_literal '\1';{,g" -e "s,\}([^{]+)\$,}urlencode_literal '\1',g" -e "s,\}([^}{]+)\{,}urlencode_literal '\1';{,g" -e "s,\{([^{}]+)\},urlencode_template_replace '\1';,g"
 	
 	# Whilst using sed and eval works, $ remains a problem and so is escaped
-	eval "$(printf '%s' "$template" | sed -r -e 's;\$;\\\$;g' -e "s,^([^}]+)\{,urlencode_literal '\1';{,g" -e "s,\}([^{]+)\$,}urlencode_literal '\1',g" -e "s,\}([^}{]+)\{,}urlencode_literal '\1';{,g" -e "s,\{([^{}]+)\},urlencode_template_replace '\1';,g")"
+	eval "$(printf '%s' "$template"  |  sed -r -e 's,\$,\\\$,g' -e 's,",\\",g' -e 's,^([^}]+)\{,urlencode_literal "\1";{,g' -e 's,\}([^{]+)\$,}urlencode_literal "\1",g' -e 's,\}([^}{]+)\{,}urlencode_literal "\1";{,g' -e 's,\{([^{}]+)\},urlencode_template_replace "\1";,g')"
 }
 
 core_dependency_requires '*' sed
 urlencode_template_replace()
 {
 	local expandedExpresion="$1"
-	expandedExpresion="$(printf '%s' "$expandedExpresion"| sed -e 's;\$;$;g')"
 	
 	if core_variable_isUnset _urlencode_template_temporaryFile; then
 		local TMP_FILE
