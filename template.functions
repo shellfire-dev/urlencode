@@ -14,20 +14,17 @@ urlencode_template()
 	
 	# -E for BSD, -r for GNU / Busybox extended
 	
-	#echo 'hello{name}john{more}end' | gsed -r -e 's;\$;\\\$;g' -e "s;^([^}]+)\{;\$\(urlencode_literal '\1'\){;g" -e "s;\}([^{]+)\$;}\$\(urlencode_literal '\1'\);g" -e "s;\}([^}{]+)\{;}\$\(urlencode_literal '\1'\){;g" -e "s;\{([^{}]+)\};\$\(urlencode_template_replace '\1'\);g"
+	#echo 'hello{name}john{more}end' | gsed -r -e 's;\$;\\\$;g' -e "s,^([^}]+)\{,urlencode_literal '\1';{,g" -e "s,\}([^{]+)\$,}urlencode_literal '\1',g" -e "s,\}([^}{]+)\{,}urlencode_literal '\1';{,g" -e "s,\{([^{}]+)\},urlencode_template_replace '\1';,g"
 	
-	local executableTemplate="$(printf '%s' "$template" | sed -r -e 's;\$;\\\$;g' -e "s;^([^}]+)\{;\$\(urlencode_literal '\1'\){;g" -e "s;\}([^{]+)\$;}\$\(urlencode_literal '\1'\);g" -e "s;\}([^}{]+)\{;}\$\(urlencode_literal '\1'\){;g" -e "s;\{([^{}]+)\};\$\(urlencode_template_replace '\1'\);g")"
-	
-	printf '%s' "$executableTemplate"
+	# Whilst using sed and eval works, $ remains a problem and so is escaped
+	eval "$(printf '%s' "$template" | sed -r -e 's;\$;\\\$;g' -e "s,^([^}]+)\{,urlencode_literal '\1';{,g" -e "s,\}([^{]+)\$,}urlencode_literal '\1',g" -e "s,\}([^}{]+)\{,}urlencode_literal '\1';{,g" -e "s,\{([^{}]+)\},urlencode_template_replace '\1';,g")"
 }
 
 core_dependency_requires '*' sed
 urlencode_template_replace()
 {
 	local expandedExpresion="$1"
-	
-	# $ has been replaced with \$, but '$' is NOT valid
-	expandedExpression="$(printf '%s' "$expandedExpresion"| sed -e 's;\$;$;g')"
+	expandedExpresion="$(printf '%s' "$expandedExpresion"| sed -e 's;\$;$;g')"
 	
 	if core_variable_isUnset _urlencode_template_temporaryFile; then
 		local TMP_FILE
@@ -44,12 +41,12 @@ urlencode_template_replace()
 			# we'll use urlencode_template_replace_XXXX for variable names
 			'+')
 				prefix=''
-				urlencode_template_replace_operate "$(core_variable_allButFirst "$expandedExpresion")" ',' urlencode_literal urlencode_template_replace_operator_printNameEqualsNothing
+				urlencode_template_replace_operate "$(core_variable_allButFirst "$expandedExpresion")" ',' urlencode_reserved urlencode_template_replace_operator_printNameEqualsNothing
 			;;
 		
 			'#')
 				prefix='#'
-				urlencode_template_replace_operate "$(core_variable_allButFirst "$expandedExpresion")" ',' urlencode_pathPiece urlencode_template_replace_operator_printNameEqualsNothing
+				urlencode_template_replace_operate "$(core_variable_allButFirst "$expandedExpresion")" ',' urlencode_reserved urlencode_template_replace_operator_printNameEqualsNothing
 			;;
 		
 			'.')
