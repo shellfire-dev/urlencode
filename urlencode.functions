@@ -40,7 +40,7 @@ urlencode_template()
 	
 	local executableTemplate="$(printf '%s' "$template" | sed -r -e 's;\$;\\\$;g' -e "s;^([^}]+)\{;\$\(urlencode_literal '\1'\){;g" -e "s;\}([^{]+)\$;}\$\(urlencode_literal '\1'\);g" -e "s;\}([^}{]+)\{;}\$\(urlencode_literal '\1'\){;g" -e "s;\{([^{}]+)\};\$\(urlencode_template_replace '\1'\);g")"
 	
-	eval "$executableTemplate"
+	printf '%s' "$executableTemplate"
 }
 
 urlencode_template_replace()
