@@ -44,6 +44,24 @@ urlencode_form()
 	printf '%s' "${data##/?}"
 }
 
+urlencode_xWwwFormUrlEncoded()
+{
+	local isAfterFirst=0
+	while [ $# -ne 0 ]; then
+	do
+		if [ $isAfterFirst -eq 1 ]; then
+			printf '&'
+		else
+			isAfterFirst=1
+		fi
+		
+		urlencode_form "$1"
+		printf '='
+		urlencode_form "$2"
+		shift 2
+	done
+}
+
 # http://tools.ietf.org/html/rfc6570#section-2.1 and section 3.1 could be better written, or, even better, should be one section.
 urlencode_literal()
 {
