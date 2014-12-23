@@ -47,7 +47,7 @@ urlencode_form()
 urlencode_xWwwFormUrlEncoded()
 {
 	local isAfterFirst=0
-	while [ $# -ne 0 ]; then
+	while [ $# -ne 0 ]
 	do
 		if [ $isAfterFirst -eq 1 ]; then
 			printf '&'
