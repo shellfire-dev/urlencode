@@ -8,6 +8,10 @@ This module provides a simple framework for coping with the myriad ways of 'urle
 
 An example user is the [github api] module, which uses it to url encode URI templates.
 
+## Compatibility
+
+* Tag [`release_2015.0117.1750-1`](https://github.com/shellfire-dev/urlencode/releases/tag/release_2015.0117.1750-1) is compatible with [shellfire] release [`release_2015.0117.1750-1`](https://github.com/shellfire-dev/shellfire/releases/tag/release_2015.0117.1750-1).
+
 ## Overview
 
 ### URI Templating, eg for the [github api]
