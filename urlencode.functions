@@ -41,6 +41,7 @@ BEGIN {
 core_dependency_requires '*' curl
 urlencode_form()
 {
+	local pathPiece="$1"
 	# newer versions return 0, older versions 3
 	set +e
 	local data="$(curl --silent --output /dev/null --write-out '%{url_effective}' --get --url '' --data-urlencode "$pathPiece")"
