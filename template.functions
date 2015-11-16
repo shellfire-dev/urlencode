@@ -107,7 +107,8 @@ urlencode_template_replace_operate()
 	local encodingFunction="$3"
 	local printNameEquals="$4"
 	
-	IFS=',' set -- $expressionLessOperator
+	local stringSeparated="$(core_variable_escape "$expressionLessOperator" ',' ' ')"
+	IFS=' ' set -- $stringSeparated
 	
 	local variableName
 	local ourVariableName
